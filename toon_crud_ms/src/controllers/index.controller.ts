@@ -54,11 +54,19 @@ export const deleteUser = async (req:Request, res:Response): Promise<Response> =
 
 } 
 
+
+
 export const login = async (req:Request, res:Response): Promise<Response> => {
-    const email = req.params.email;
-    const password = req.params.password;
-    await pool.query('SELECT * FROM users WHERE email = $1 AND password = $2',[email, password]);
-    //SELECT 1 from user = $_GET[user] and password = $_GET[password]
-    return res.json(`User login successfully`);
-} 
+    const email = req.body.email;
+    const password = req.body.password;
+    const response: QueryResult = await pool.query('SELECT * FROM users WHERE email = $1 AND password = $2',[email, password]);
+    if(response.rowCount == 0)
+    {
+        return res.json(`User not found`);
+    }
+    else
+    {
+        return res.json(response.rows);
+    }
+}
 

@@ -58,10 +58,14 @@ const deleteUser = (req, res) => __awaiter(void 0, void 0, void 0, function* () 
 });
 exports.deleteUser = deleteUser;
 const login = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const email = req.params.email;
-    const password = req.params.password;
-    yield database_1.pool.query('SELECT * FROM users WHERE email = $1 AND password = $2', [email, password]);
-    //SELECT 1 from user = $_GET[user] and password = $_GET[password]
-    return res.json(`User login successfully`);
+    const email = req.body.email;
+    const password = req.body.password;
+    const response = yield database_1.pool.query('SELECT * FROM users WHERE email = $1 AND password = $2', [email, password]);
+    if (response.rowCount == 0) {
+        return res.json(`User not found`);
+    }
+    else {
+        return res.json(response.rows);
+    }
 });
 exports.login = login;

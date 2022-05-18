@@ -6,7 +6,7 @@ services:
     restart: always
     build: .
     ports:
-      - "5005:5000"
+      - "5000:5000"
     links:
      - toon_crud_db
     volumes:
