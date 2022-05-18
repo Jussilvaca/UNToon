@@ -24,18 +24,34 @@ export const getUserbyId = async (req: Request, res: Response): Promise<Response
 
 export const createUser = async (req:Request, res:Response): Promise<Response> => {
     const {nickname,name,lastname,email,password,birthday} = req.body;
-    const response: QueryResult = await pool.query('INSERT INTO users (nickname, name, lastname, email, password, birthday) VALUES ($1, $2, $3, $4, $5, $6)', [nickname, name, lastname, email, password, birthday])
-    return res.json({
-        message: 'User created successfully',
-        body: {
-            nickname,
-            name,
-            lastname,
-            email,
-            password,
-            birthday
-        }
-    })
+
+    const newemail: QueryResult = await pool.query('SELECT * FROM users WHERE email = $1',[email]);
+    if(newemail.rowCount != 0)
+    {
+        return res.json({
+            message: 'This email is already in use'
+        })
+        
+    }
+    else
+    {
+        
+        const response: QueryResult = await pool.query('INSERT INTO users (nickname, name, lastname, email, password, birthday) VALUES ($1, $2, $3, $4, $5, $6)', [nickname, name, lastname, email, password, birthday])
+        return res.json({
+            message: 'User created successfully',
+            body: {
+                nickname,
+                name,
+                lastname,
+                email,
+                password,
+                birthday
+            }
+        })
+      
+
+    
+    }
 }
 
 

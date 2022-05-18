@@ -30,18 +30,26 @@ const getUserbyId = (req, res) => __awaiter(void 0, void 0, void 0, function* ()
 exports.getUserbyId = getUserbyId;
 const createUser = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { nickname, name, lastname, email, password, birthday } = req.body;
-    const response = yield database_1.pool.query('INSERT INTO users (nickname, name, lastname, email, password, birthday) VALUES ($1, $2, $3, $4, $5, $6)', [nickname, name, lastname, email, password, birthday]);
-    return res.json({
-        message: 'User created successfully',
-        body: {
-            nickname,
-            name,
-            lastname,
-            email,
-            password,
-            birthday
-        }
-    });
+    const newemail = yield database_1.pool.query('SELECT * FROM users WHERE email = $1', [email]);
+    if (newemail.rowCount != 0) {
+        return res.json({
+            message: 'This email is already in use'
+        });
+    }
+    else {
+        const response = yield database_1.pool.query('INSERT INTO users (nickname, name, lastname, email, password, birthday) VALUES ($1, $2, $3, $4, $5, $6)', [nickname, name, lastname, email, password, birthday]);
+        return res.json({
+            message: 'User created successfully',
+            body: {
+                nickname,
+                name,
+                lastname,
+                email,
+                password,
+                birthday
+            }
+        });
+    }
 });
 exports.createUser = createUser;
 const updateUser = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
